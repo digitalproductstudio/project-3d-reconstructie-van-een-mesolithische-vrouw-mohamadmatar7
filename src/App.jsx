@@ -8,10 +8,12 @@ import ToolsPage from './pages/ToolsPage';
 import WayOfLifePage from './pages/WayOfLifePage';
 import NavBar from './components/NavBar';
 
+const isProduction = import.meta.env.MODE === 'production';
+const repoName = 'project-3d-reconstructie-van-een-mesolithische-vrouw-mohamadmatar7';
 
 function App() {
   return (
-    <Router>
+    <Router basename={isProduction ? `/${repoName}` : '/'}>
       <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />

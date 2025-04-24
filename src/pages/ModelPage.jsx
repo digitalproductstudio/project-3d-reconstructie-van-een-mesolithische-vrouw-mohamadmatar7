@@ -10,58 +10,55 @@ export default function ModelPage() {
   const [intensity, setIntensity] = useState(1);
 
   return (
-    <div className="w-full h-screen flex flex-col md:flex-row bg-gray-200">
-      {/* Sidebar controls */}
-      <div className="w-full md:w-1/4 p-6 bg-white/40 backdrop-blur-md shadow-xl border-r border-white/20 flex flex-col justify-center items-center space-y-6">
-            <h2 className="text-3xl font-bold text-gray-800 tracking-wide">Pas het model aan</h2>
+    <div className="flex flex-col md:flex-row w-full h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-full md:w-[320px] h-[50vh] md:h-auto overflow-y-auto p-6 bg-white/50 backdrop-blur-md border-r border-white/30 shadow-md z-10 flex flex-col gap-6">
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800 text-center">
+          Pas het model aan
+        </h2>
 
-            <div className="w-full flex flex-col items-start gap-2">
-                <label className="text-sm text-gray-700 font-medium">Huidkleur</label>
-                <input
-                type="color"
-                value={skinColor}
-                onChange={(e) => setSkinColor(e.target.value)}
-                className="w-full h-12 rounded-md border border-gray-300 shadow-inner cursor-pointer transition hover:scale-[1.02]"
-                />
-            </div>
+        <Control label="Huidkleur">
+          <input
+            type="color"
+            value={skinColor}
+            onChange={(e) => setSkinColor(e.target.value)}
+            className="w-full h-12 rounded-md border shadow cursor-pointer"
+          />
+        </Control>
 
-            <div className="w-full flex flex-col items-start gap-2">
-                <label className="text-sm text-gray-700 font-medium">Haarkleur</label>
-                <input
-                type="color"
-                value={hairColor}
-                onChange={(e) => setHairColor(e.target.value)}
-                className="w-full h-12 rounded-md border border-gray-300 shadow-inner cursor-pointer transition hover:scale-[1.02]"
-                />
-            </div>
+        <Control label="Haarkleur">
+          <input
+            type="color"
+            value={hairColor}
+            onChange={(e) => setHairColor(e.target.value)}
+            className="w-full h-12 rounded-md border shadow cursor-pointer"
+          />
+        </Control>
 
-            <div className="w-full flex flex-col items-start gap-2">
-                <label className="text-sm text-gray-700 font-medium">Oogkleur</label>
-                <input
-                type="color"
-                value={eyeColor}
-                onChange={(e) => setEyeColor(e.target.value)}
-                className="w-full h-12 rounded-md border border-gray-300 shadow-inner cursor-pointer transition hover:scale-[1.02]"
-                />
-            </div>
+        <Control label="Oogkleur">
+          <input
+            type="color"
+            value={eyeColor}
+            onChange={(e) => setEyeColor(e.target.value)}
+            className="w-full h-12 rounded-md border shadow cursor-pointer"
+          />
+        </Control>
 
-            <div className="w-full flex flex-col items-start gap-2">
-                <label className="text-sm text-gray-700 font-medium">Lichtintensiteit</label>
-                <input
-                type="range"
-                min="0"
-                max="8"
-                step="0.1"
-                value={intensity}
-                onChange={(e) => setIntensity(e.target.value)}
-                className="w-full h-2 rounded-md border border-gray-300 shadow-inner cursor-pointer transition hover:scale-[1.02]"
-                />
-                </div>
-        </div>
+        <Control label="Lichtintensiteit">
+          <input
+            type="range"
+            min="0"
+            max="8"
+            step="0.1"
+            value={intensity}
+            onChange={(e) => setIntensity(parseFloat(e.target.value))}
+            className="w-full h-2 bg-gray-300 rounded-md"
+          />
+        </Control>
+      </div>
 
-
-      {/* 3D model viewer */}
-      <div className="flex-1">
+      {/* 3D Model */}
+      <div className="flex-1 h-full">
         <Canvas camera={{ position: [0, 2, 6], fov: 45 }}>
           <ambientLight intensity={1.5} />
           <directionalLight position={[3, 3, 3]} intensity={intensity} />
@@ -78,6 +75,16 @@ export default function ModelPage() {
           <OrbitControls />
         </Canvas>
       </div>
+    </div>
+  );
+}
+
+// Componentje voor consistent UI design
+function Control({ label, children }) {
+  return (
+    <div className="flex flex-col gap-1 w-full">
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      {children}
     </div>
   );
 }

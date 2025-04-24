@@ -2,8 +2,8 @@ import { useGLTF } from '@react-three/drei';
 import { useEffect } from 'react';
 
 export default function WomanModel({ skinColor, hairColor, eyeColor, ...props }) {
-  const { scene } = useGLTF('/models/woman.glb');
-
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/woman.glb`);
+  
   useEffect(() => {
     scene.traverse((child) => {
       console.log('child', child.name);
