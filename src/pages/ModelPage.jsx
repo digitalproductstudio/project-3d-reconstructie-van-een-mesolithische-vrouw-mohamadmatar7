@@ -2,6 +2,8 @@ import { useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import WomanModel from '../components/WomanModel';
+import ColorSegmentPicker from '../components/ColorSegmentPicker';
+
 
 export default function ModelPage() {
   const [skinColor, setSkinColor] = useState('#FFFFFF');
@@ -17,6 +19,7 @@ export default function ModelPage() {
           Pas het model aan
         </h2>
 
+        {/*
         <Control label="Huidkleur">
           <input
             type="color"
@@ -43,6 +46,28 @@ export default function ModelPage() {
             className="w-full h-12 rounded-md border shadow cursor-pointer"
           />
         </Control>
+        */}
+
+        <ColorSegmentPicker
+          label="Huidkleur"
+          value={skinColor}
+          onChange={setSkinColor}
+          options={['#f1c27d', '#dab28f', '#a8754f', '#8d5524']}
+        />
+
+        <ColorSegmentPicker
+          label="Haarkleur"
+          value={hairColor}
+          onChange={setHairColor}
+          options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']}
+        />
+
+        <ColorSegmentPicker
+          label="Oogkleur"
+          value={eyeColor}
+          onChange={setEyeColor}
+          options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']}
+        />
 
         <Control label="Lichtintensiteit">
           <input
@@ -52,7 +77,7 @@ export default function ModelPage() {
             step="0.1"
             value={intensity}
             onChange={(e) => setIntensity(parseFloat(e.target.value))}
-            className="w-full h-2 bg-gray-300 rounded-md"
+            className="w-full h-2 bg-gray-300 rounded-md cursor-pointer"
           />
         </Control>
       </div>
