@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ModelPage from './pages/ModelPage';
 import ARPage from './pages/ARPage';
@@ -42,8 +42,7 @@ function AppContent() {
 
 export default function App() {
   return (
-    // HashRouter works with paths based on a hash (#) and doesn't rely on the server to handle routing
-    <Router basename={isProduction ? `/${repoName}` : '/'} >
+    <Router basename={isProduction ? `/${repoName}` : '/'}>
       <AppContent />
     </Router>
   );
