@@ -78,7 +78,7 @@ export default function ARPage() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen bg-black flex items-center justify-center">
+    <div className="relative w-full h-screen flex items-center justify-center">
       <video
         ref={videoRef}
         className="absolute rounded opacity-70"

@@ -82,16 +82,20 @@ export default function ModelPage() {
  
         {/* Lichtintensiteit */}
         <Control label="Lichtintensiteit">
-          <input
-            type="range"
-            min="0"
-            max="8"
-            step="0.1"
-            value={intensity}
-            onChange={(e) => setIntensity(parseFloat(e.target.value))}
-            className="w-full h-2 bg-gray-300 rounded-md cursor-pointer"
-          />
-        </Control>
+  <input
+    type="range"
+    min="0"
+    max="8"
+    step="0.1"
+    value={intensity}
+    onChange={(e) => setIntensity(parseFloat(e.target.value))}
+    className="w-full h-2 bg-transparent border-2 border-[#7A3D02] rounded-full cursor-pointer appearance-none outline-none"
+    style={{
+      background: `linear-gradient(to right, #7A3D02 ${intensity * 12.5}%, #c6893b 0%)`,
+    }}
+  />
+</Control>
+
  
         {/* Reset Button */}
         <button

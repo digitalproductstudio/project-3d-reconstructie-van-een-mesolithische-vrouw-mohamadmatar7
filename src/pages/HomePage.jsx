@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import CustomLink from "../components/CustomLink";
 
 export default function HomePage() {
   return (
@@ -16,12 +16,9 @@ export default function HomePage() {
         Ontdek hoe wetenschap en verbeelding samenkomen in de reconstructie van een vrouw uit het mesolithicum.
       </p>
 
-      <Link
-        to="/model"
-        className="bg-[#7A3D02] hover:bg-[#5c2e01] text-[#DEBE89] text-lg px-6 py-3 rounded-lg shadow-md uppercase font-bold font-poppins transition"
-      >
+      <CustomLink to="/model">
         Start de reconstructie
-      </Link>
+      </CustomLink>
     </div>
   );
 }
