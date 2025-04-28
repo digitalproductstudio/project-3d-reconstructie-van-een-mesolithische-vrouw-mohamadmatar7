@@ -1,10 +1,12 @@
 export default function ColorSegmentPicker({ label, value, onChange, options, type = 'picker' }) {
   if (type === 'slider') {
     const gradient = `linear-gradient(to right, ${options.join(',')})`;
-
+ 
     return (
       <div className="flex flex-col gap-2 w-full">
-        <label className="text-sm font-semibold text-gray-800">{label}</label>
+        <label className="text-sm font-semibold text-[#EEBD74]"   style={{
+    textShadow: '1px 1px 2px black',
+  }}>{label}</label>
         <input
           type="range"
           min="0"
@@ -20,12 +22,17 @@ export default function ColorSegmentPicker({ label, value, onChange, options, ty
       </div>
     );
   }
-
-  // Default (oude bolletjes)
+ 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <label className="text-sm font-semibold text-gray-800">{label}</label>
-      <div className="flex flex-wrap gap-3">
+<label
+  className="text-sm font-semibold text-[#EEBD74]"
+  style={{
+    textShadow: '1px 1px 2px black',
+  }}
+>
+  {label}
+</label>      <div className="flex flex-wrap gap-3">
         {options.map((color) => (
           <button
             key={color}
