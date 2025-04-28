@@ -42,7 +42,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Router basename={isProduction ? `/${repoName}` : '/'}>
+    // HashRouter works with paths based on a hash (#) and doesn't rely on the server to handle routing
+    <Router basename={isProduction ? `/${repoName}` : '/'} >
       <AppContent />
     </Router>
   );
