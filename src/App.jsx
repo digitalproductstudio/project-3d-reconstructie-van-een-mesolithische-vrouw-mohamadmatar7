@@ -29,7 +29,7 @@ function AppContent() {
     >
       <NavBar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="" element={<HomePage />} />
         <Route path="/model" element={<ModelPage />} />
         <Route path="/ar" element={<ARPage />} />
         <Route path="/facts" element={<FactsPage />} />
@@ -42,8 +42,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Router basename={isProduction ? `/${repoName}` : '/'}>
+    <BrowserRouter basename={isProduction ? `/${repoName}` : '/'}>
       <AppContent />
-    </Router>
+    </BrowserRouter>
   );
 }
