@@ -1,15 +1,32 @@
 import { useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import { FaRing, FaUndo } from 'react-icons/fa'; // ➡️ Toegevoegd: Undo icon
 import WomanModel from '../components/WomanModel';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
-
+import Earring from '../components/Earring';
 
 export default function ModelPage() {
-  const [skinColor, setSkinColor] = useState('#FFFFFF');
+  const [skinSlider, setSkinSlider] = useState(0.1);
   const [hairColor, setHairColor] = useState('#3b2f2f');
   const [eyeColor, setEyeColor] = useState('#000000');
   const [intensity, setIntensity] = useState(1);
+  const [showEarrings, setShowEarrings] = useState(false);
+
+  const skinToneColors = ['#ffffff', '#f1c27d', '#dab28f', '#a8754f', '#8d5524', '#000000'];
+
+  const getSkinColor = (sliderValue) => {
+    const index = Math.round(sliderValue);
+    return skinToneColors[index] || skinToneColors[0];
+  };
+
+  const handleReset = () => {
+    setSkinSlider(0.1);
+    setHairColor('#3b2f2f');
+    setEyeColor('#000000');
+    setIntensity(1);
+    setShowEarrings(false);
+  };
 
   return (
     <div className="flex flex-col md:flex-row w-full h-screen bg-gray-100">
@@ -19,40 +36,12 @@ export default function ModelPage() {
           Pas het model aan
         </h2>
 
-        {/*
-        <Control label="Huidkleur">
-          <input
-            type="color"
-            value={skinColor}
-            onChange={(e) => setSkinColor(e.target.value)}
-            className="w-full h-12 rounded-md border shadow cursor-pointer"
-          />
-        </Control>
-
-        <Control label="Haarkleur">
-          <input
-            type="color"
-            value={hairColor}
-            onChange={(e) => setHairColor(e.target.value)}
-            className="w-full h-12 rounded-md border shadow cursor-pointer"
-          />
-        </Control>
-
-        <Control label="Oogkleur">
-          <input
-            type="color"
-            value={eyeColor}
-            onChange={(e) => setEyeColor(e.target.value)}
-            className="w-full h-12 rounded-md border shadow cursor-pointer"
-          />
-        </Control>
-        */}
-
         <ColorSegmentPicker
           label="Huidkleur"
-          value={skinColor}
-          onChange={setSkinColor}
-          options={['#f1c27d', '#dab28f', '#a8754f', '#8d5524']}
+          value={skinSlider}
+          onChange={setSkinSlider}
+          options={skinToneColors}
+          type="slider"
         />
 
         <ColorSegmentPicker
@@ -69,6 +58,25 @@ export default function ModelPage() {
           options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']}
         />
 
+        {/* Modern Toggle for Oorringen */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <FaRing className="text-gray-700 text-xl transform -rotate-45" />
+            <span className="text-sm font-medium text-gray-700">Oorring</span>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              className="sr-only peer"
+              checked={showEarrings}
+              onChange={() => setShowEarrings(!showEarrings)}
+            />
+            <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-gray-700 transition"></div>
+            <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+          </label>
+        </div>
+
+        {/* Lichtintensiteit */}
         <Control label="Lichtintensiteit">
           <input
             type="range"
@@ -80,6 +88,14 @@ export default function ModelPage() {
             className="w-full h-2 bg-gray-300 rounded-md cursor-pointer"
           />
         </Control>
+
+        {/* Reset Button */}
+        <button
+          onClick={handleReset}
+          className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md shadow transition"
+        >
+          <FaUndo /> Reset
+        </button>
       </div>
 
       {/* 3D Model */}
@@ -89,13 +105,18 @@ export default function ModelPage() {
           <directionalLight position={[3, 3, 3]} intensity={intensity} />
           <Suspense fallback={null}>
             <WomanModel
-              skinColor={skinColor}
+              skinColor={getSkinColor(skinSlider)}
               hairColor={hairColor}
               eyeColor={eyeColor}
               scale={1.5}
               position={[0, 0, 0]}
               rotation={[-0.35, 0, 0]}
             />
+            {showEarrings && (
+              <>
+                <Earring position={[1.15, -0.3, 0.7]} scale={[0.02, 0.02, 0.02]} rotation={[-0.2, Math.PI, -0.2]} />
+              </>
+            )}
           </Suspense>
           <OrbitControls />
         </Canvas>
@@ -104,7 +125,7 @@ export default function ModelPage() {
   );
 }
 
-// Componentje voor consistent UI design
+// Kleine helper component
 function Control({ label, children }) {
   return (
     <div className="flex flex-col gap-1 w-full">
