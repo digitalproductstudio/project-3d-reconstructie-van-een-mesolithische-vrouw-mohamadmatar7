@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function NavBar() {
   return (
-    <nav className="border-b px-4 py-3 bg-white shadow-sm">
+    <nav className="px-4 py-3">
       <div className="flex gap-6 justify-center">
         {[
           { to: '/', label: 'Home' },

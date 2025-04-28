@@ -29,7 +29,7 @@ export default function ModelPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row w-full h-screen">
       {/* Sidebar */}
       <div className="w-full md:w-[320px] h-[50vh] md:h-auto overflow-y-auto p-6 bg-white/50 backdrop-blur-md border-r border-white/30 shadow-md z-10 flex flex-col gap-6">
         <h2 className="text-xl md:text-2xl font-semibold text-gray-800 text-center">

@@ -1,5 +1,4 @@
-// src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ModelPage from './pages/ModelPage';
 import ARPage from './pages/ARPage';
@@ -11,9 +10,23 @@ import NavBar from './components/NavBar';
 const isProduction = import.meta.env.MODE === 'production';
 const repoName = 'project-3d-reconstructie-van-een-mesolithische-vrouw-mohamadmatar7';
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+
+  const backgroundImage = location.pathname === '/model'
+    ? `${import.meta.env.BASE_URL}images/background2.png`
+    : `${import.meta.env.BASE_URL}images/background.png`;
+
   return (
-    <Router basename={isProduction ? `/${repoName}` : '/'}>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -23,8 +36,14 @@ function App() {
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/way-of-life" element={<WayOfLifePage />} />
       </Routes>
-    </Router>
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router basename={isProduction ? `/${repoName}` : '/'}>
+      <AppContent />
+    </Router>
+  );
+}
