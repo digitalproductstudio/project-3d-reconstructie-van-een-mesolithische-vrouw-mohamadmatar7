@@ -28,7 +28,7 @@ export default function ModelPage() {
   const [hairColor, setHairColor] = useState('#3b2f2f');
   const [eyeColor, setEyeColor] = useState('#000000');
   const [intensity, setIntensity] = useState(1);
-  const [showEarrings, setShowEarrings] = useState(false);
+  const [showEarrings, setShowEarrings] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
@@ -70,7 +70,7 @@ export default function ModelPage() {
     setHairColor('#3b2f2f');
     setEyeColor('#000000');
     setIntensity(1);
-    setShowEarrings(false);
+    setShowEarrings(true);
     updateQueryParams(); // Reset the URL query params as well
   };
 
