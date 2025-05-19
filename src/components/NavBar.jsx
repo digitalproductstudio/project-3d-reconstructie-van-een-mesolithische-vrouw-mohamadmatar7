@@ -19,16 +19,16 @@ export default function NavBar() {
               key={item.to}
               to={item.to}
               className={`relative font-medium text-lg md:text-xl transition mt-4 ${
-                isActive ? 'text-[#8B5A2B]' : 'text-[#5C3A1E] hover:text-[#8B5A2B]'
+                isActive ? 'text-[#fac798]' : 'text-[#5C3A1E] hover:text-[#fac798]'
               }`}
               style={{
                 textShadow: isActive
-                  ? '0.5px 0.5px 1px rgba(0, 0, 0, 0.25)'
+                  ? '0.5px 0.5px 1px rgba(0, 0.3, 0, 0.75)'
                   : '0.5px 0.5px 1px rgba(0, 0, 0, 0.25)',
               }}
             >
               <span
-                className={`after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:bg-[#8B5A2B] after:transition-all after:duration-300 ${
+                className={`after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2.5px] after:bg-[#fac798] after:transition-all after:duration-300 ${
                   isActive ? 'after:w-full' : 'after:w-0 hover:after:w-full'
                 }`}
               >
