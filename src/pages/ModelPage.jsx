@@ -4,6 +4,7 @@ import { OrbitControls } from '@react-three/drei';
 import { FaRing, FaUndo } from 'react-icons/fa';
 import { useSearchParams } from 'react-router-dom';
 import WomanModel from '../components/WomanModel';
+import Loader from '../components/Loader';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
 import Earring from '../components/Earring';
 
@@ -147,7 +148,7 @@ export default function ModelPage() {
         <Canvas camera={{ position: [0, 2, 6], fov: 45 }}>
           <ambientLight intensity={1.5} />
           <directionalLight position={[3, 3, 3]} intensity={intensity} />
-          <Suspense fallback={null}>
+          <Suspense fallback={<Loader />}>
             <WomanModel
               skinColor={getSkinColor(skinSlider)}
               hairColor={hairColor}
