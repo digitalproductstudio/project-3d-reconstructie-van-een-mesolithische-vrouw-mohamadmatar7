@@ -1,46 +1,46 @@
-import { useState, Suspense, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { FaRing, FaUndo, FaArrowsAlt } from 'react-icons/fa';
 import { useSearchParams } from 'react-router-dom';
 import { motion, useDragControls } from 'framer-motion';
- 
+
 import WomanModel from '../components/WomanModel';
 import Loader from '../components/Loader';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
 import Earring from '../components/Earring';
- 
+
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
- 
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [breakpoint]);
- 
+
   return isMobile;
 }
- 
+
 export default function ModelPage() {
   const [skinSlider, setSkinSlider] = useState(0.1);
   const [hairColor, setHairColor] = useState('#3b2f2f');
   const [eyeColor, setEyeColor] = useState('#000000');
   const [intensity, setIntensity] = useState(1);
   const [showEarrings, setShowEarrings] = useState(true);
- 
+
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
   const dragControls = useDragControls();
   const containerRef = useRef(null);
- 
+
   const skinToneColors = ['#ffffff', '#f1c27d', '#dab28f', '#a8754f', '#8d5524', '#000000'];
- 
+
   const getSkinColor = (sliderValue) => {
     const index = Math.round(sliderValue);
     return skinToneColors[index] || skinToneColors[0];
   };
- 
+
   const updateQueryParams = () => {
     setSearchParams({
       skin: skinSlider,
@@ -50,25 +50,25 @@ export default function ModelPage() {
       earrings: showEarrings ? 'true' : 'false',
     });
   };
- 
+
   useEffect(() => {
     const skinParam = searchParams.get('skin');
     const hairParam = searchParams.get('hair');
     const eyesParam = searchParams.get('eyes');
     const intensityParam = searchParams.get('intensity');
     const earringsParam = searchParams.get('earrings');
- 
+
     if (skinParam) setSkinSlider(parseFloat(skinParam));
     if (hairParam) setHairColor(hairParam);
     if (eyesParam) setEyeColor(eyesParam);
     if (intensityParam) setIntensity(parseFloat(intensityParam));
     if (earringsParam) setShowEarrings(earringsParam === 'true');
   }, [searchParams]);
- 
+
   useEffect(() => {
     updateQueryParams();
   }, [skinSlider, hairColor, eyeColor, intensity, showEarrings]);
- 
+
   const handleReset = () => {
     setSkinSlider(0.1);
     setHairColor('#3b2f2f');
@@ -77,14 +77,14 @@ export default function ModelPage() {
     setShowEarrings(false);
     updateQueryParams();
   };
- 
+
   return (
     <div
       ref={containerRef}
-      className="flex flex-col md:flex-row w-full h-screen overflow-hidden"
+      className="pt-6 md:pt-16 flex flex-col md:flex-row w-full h-screen overflow-hidden"
     >
-      {/* 3D MODEL ALWAYS FIRST */}
-<div className="flex-1 h-full">
+      {/* 3D MODEL */}
+      <div className="flex-1 h-full">
         <Canvas camera={{ position: [0, 2, 6], fov: 45 }}>
           <ambientLight intensity={1.5} />
           <directionalLight position={[3, 3, 3]} intensity={intensity} />
@@ -108,7 +108,7 @@ export default function ModelPage() {
           <OrbitControls />
         </Canvas>
       </div>
- 
+
       {/* SIDEBAR */}
       {!isMobile ? (
         <motion.div
@@ -117,7 +117,7 @@ export default function ModelPage() {
           dragListener={false}
           dragMomentum={false}
           dragConstraints={containerRef}
-          className="absolute top-4 left-4 z-50 bg-transparent rounded-lg shadow-lg w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
+          className="absolute top-17 left-4 z-50 bg-transparent  w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
         >
           <h2
             className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2"
@@ -136,7 +136,7 @@ export default function ModelPage() {
             />
             Pas het model aan
           </h2>
- 
+
           <ColorSegmentPicker
             label="Huidkleur"
             value={skinSlider}
@@ -156,7 +156,7 @@ export default function ModelPage() {
             onChange={setEyeColor}
             options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']}
           />
- 
+
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <FaRing className="text-[#EEBD74] text-xl transform -rotate-45" />
@@ -173,7 +173,7 @@ export default function ModelPage() {
               <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
             </label>
           </div>
- 
+
           <button
             onClick={handleReset}
             className="md:mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#86561C] hover:bg-[#6c4710] text-white rounded-md shadow-lg transition duration-200 ease-in-out"
@@ -182,14 +182,14 @@ export default function ModelPage() {
           </button>
         </motion.div>
       ) : (
-        <div className="w-full md:w-[320px] h-[55vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6 bg-transparent">
+        <div className="w-full md:w-[320px] h-[45vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6 bg-transparent">
           <h2
             className="text-xl md:text-2xl font-semibold text-[#EEBD74] text-center uppercase"
             style={{ textShadow: '2px 2px 2px #5C3A1E' }}
           >
             Pas het model aan
           </h2>
- 
+
           <ColorSegmentPicker
             label="Huidkleur"
             value={skinSlider}
@@ -209,7 +209,7 @@ export default function ModelPage() {
             onChange={setEyeColor}
             options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']}
           />
- 
+
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <FaRing className="text-[#EEBD74] text-xl transform -rotate-45" />
@@ -226,7 +226,7 @@ export default function ModelPage() {
               <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
             </label>
           </div>
- 
+
           <button
             onClick={handleReset}
             className="md:mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#86561C] hover:bg-[#6c4710] text-white rounded-md shadow-lg transition duration-200 ease-in-out"
