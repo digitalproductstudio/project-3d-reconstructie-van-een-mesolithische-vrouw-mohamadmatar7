@@ -82,7 +82,7 @@ export default function ModelPage() {
   return (
     <div className="flex flex-col-reverse md:flex-row w-full h-screen">
       {/* Sidebar */}
-      <div className="w-full md:w-[320px] h-[60vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6">
+      <div className="w-full md:w-[320px] h-[55vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6">
         <h2
           className="text-xl md:text-2xl font-semibold text-[#EEBD74] text-center uppercase"
           style={{
@@ -174,7 +174,8 @@ export default function ModelPage() {
             />
             {showEarrings && (
               <>
-                <Earring position={[1.15, -0.3, 0.7]} scale={[0.02, 0.02, 0.02]} rotation={[-0.2, Math.PI, -0.2]} />
+                <Earring position={isMobile ? [1.15, -0.75, 0.65] : [1.15, -0.3, 0.7]} 
+                scale={[0.02, 0.02, 0.02]} rotation={[-0.2, Math.PI, -0.2]} />
               </>
             )}
           </Suspense>
