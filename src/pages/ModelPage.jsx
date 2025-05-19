@@ -115,7 +115,7 @@ export default function ModelPage() {
           </label>
         </div>
 
-        {/* Lichtintensiteit */}
+        {/* Lichtintensiteit 
         <Control label="Lichtintensiteit">
           <input
             type="range"
@@ -130,6 +130,8 @@ export default function ModelPage() {
             }}
           />
         </Control>
+
+        */}
 
         {/* Reset Button */}
         <button
