@@ -8,6 +8,21 @@ import Loader from '../components/Loader';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
 import Earring from '../components/Earring';
 
+// Mobile screen detection hook
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < breakpoint);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 export default function ModelPage() {
   const [skinSlider, setSkinSlider] = useState(0.1);
   const [hairColor, setHairColor] = useState('#3b2f2f');
@@ -16,6 +31,7 @@ export default function ModelPage() {
   const [showEarrings, setShowEarrings] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const isMobile = useIsMobile();
 
   const skinToneColors = ['#ffffff', '#f1c27d', '#dab28f', '#a8754f', '#8d5524', '#000000'];
 
@@ -64,9 +80,9 @@ export default function ModelPage() {
   }, [skinSlider, hairColor, eyeColor, intensity, showEarrings]);
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-screen">
+    <div className="flex flex-col-reverse md:flex-row w-full h-screen">
       {/* Sidebar */}
-      <div className="w-full md:w-[320px] h-[50vh] md:h-auto overflow-y-auto p-6 shadow-md z-10 flex flex-col gap-6">
+      <div className="w-full md:w-[320px] h-[60vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6">
         <h2
           className="text-xl md:text-2xl font-semibold text-[#EEBD74] text-center uppercase"
           style={{
@@ -131,13 +147,12 @@ export default function ModelPage() {
             }}
           />
         </Control>
-
         */}
 
         {/* Reset Button */}
         <button
           onClick={handleReset}
-          className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#86561C] hover:bg-[#6c4710] text-white rounded-md shadow-lg transition duration-200 ease-in-out"
+          className="md:mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#86561C] hover:bg-[#6c4710] text-white rounded-md shadow-lg transition duration-200 ease-in-out"
         >
           <FaUndo /> Reset
         </button>
@@ -154,7 +169,7 @@ export default function ModelPage() {
               hairColor={hairColor}
               eyeColor={eyeColor}
               scale={1.5}
-              position={[0, 0, 0]}
+              position={isMobile ? [0, -0.5, 0] : [0, 0, 0]}
               rotation={[-0.35, 0, 0]}
             />
             {showEarrings && (
