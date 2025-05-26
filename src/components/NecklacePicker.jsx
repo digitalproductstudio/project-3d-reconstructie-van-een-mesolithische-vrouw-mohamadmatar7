@@ -21,7 +21,9 @@ export default function NecklacePicker({ showNeck, showNeck1, onChange }) {
               : 'bg-white/10 border border-transparent hover:border-[#86561C]'
           }`}
         >
-          <span className={`text-sm font-semibold ${!showNeck && !showNeck1 ? 'text-[#EEBD74]' : 'text-[#a47c4f]'}`}>
+          <span className={`text-sm font-semibold text-[#EEBD74]`}
+          style={{ textShadow: '2px 3px 5px #5C3A1E' }}
+          >
             Geen
           </span>
         </button>

@@ -103,26 +103,26 @@ export default function ModelPage() {
               hairColor={hairColor}
               eyeColor={eyeColor}
               scale={10}
-              position={isMobile ? [0, -1, 0] : [0, -2.2, 0]}
+              position={isMobile ? [0, -2.7, 0] : [0, -2.2, 0]}
               rotation={[-0.35, 0, 0]}
             />
             {showEarrings && (
               <Earring
-                position={isMobile ? [1.15, -0.75, 0.65] : [0.78, -0.3, -0.47]}
+                position={isMobile ? [0.76, -0.78, -0.48] : [0.78, -0.3, -0.47]}
                 scale={[0.012, 0.015, 0.015]}
                 rotation={[-0.2, Math.PI, 0]}
               />
             )}
             <group visible={showNeck}>
               <Neck
-                position={isMobile ? [0, -1.5, 0.5] : [0, -1.4, -0.525]}
+                position={isMobile ? [0, -1.9, -0.525] : [0, -1.4, -0.525]}
                 scale={0.13}
                 rotation={[-0.64, 0, 0]}
               />
             </group>
             <group visible={showNeck1}>
               <Neck1
-                position={isMobile ? [0, -1.5, 0.5] : [0.005, -0.9, 1.15]}
+                position={isMobile ? [0.005, -1.4, 1.15] : [0.005, -0.9, 1.15]}
                 scale={[0.185, 0.16, 0.16]}
                 rotation={[-2.75, 0, 0]}
               />
