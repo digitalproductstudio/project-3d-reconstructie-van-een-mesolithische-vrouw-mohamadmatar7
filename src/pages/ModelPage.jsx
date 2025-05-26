@@ -23,7 +23,7 @@ function useIsMobile(breakpoint = 768) {
 }
 
 export default function ModelPage() {
-  const [skinSlider, setSkinSlider] = useState(0.1);
+  const [skinSlider, setSkinSlider] = useState(1.72);
   const [hairColor, setHairColor] = useState('#3b2f2f');
   const [eyeColor, setEyeColor] = useState('#000000');
   const [intensity, setIntensity] = useState(1);
@@ -70,7 +70,7 @@ export default function ModelPage() {
   }, [skinSlider, hairColor, eyeColor, intensity, showEarrings]);
 
   const handleReset = () => {
-    setSkinSlider(0.1);
+    setSkinSlider(1.72);
     setHairColor('#3b2f2f');
     setEyeColor('#000000');
     setIntensity(1);
@@ -93,15 +93,15 @@ export default function ModelPage() {
               skinColor={getSkinColor(skinSlider)}
               hairColor={hairColor}
               eyeColor={eyeColor}
-              scale={1.5}
-              position={isMobile ? [0, -0.5, 0] : [0, 0, 0]}
+              scale={10}
+              position={isMobile ? [0, -1, 0] : [0, -2.2, 0]}
               rotation={[-0.35, 0, 0]}
             />
             {showEarrings && (
               <Earring
-                position={isMobile ? [1.15, -0.75, 0.65] : [1.15, -0.3, 0.7]}
-                scale={[0.02, 0.02, 0.02]}
-                rotation={[-0.2, Math.PI, -0.2]}
+                position={isMobile ? [1.15, -0.75, 0.65] : [0.78, -0.1, -0.55]}
+                scale={[0.012, 0.015, 0.015]}
+                rotation={[-0.2, Math.PI, 0]}
               />
             )}
           </Suspense>
