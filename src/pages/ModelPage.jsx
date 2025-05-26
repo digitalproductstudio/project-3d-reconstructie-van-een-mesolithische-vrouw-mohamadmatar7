@@ -2,26 +2,18 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { FaRing, FaUndo, FaArrowsAlt } from 'react-icons/fa';
-import { GiNecklaceDisplay, GiRing } from 'react-icons/gi';
+import { GiRing } from 'react-icons/gi';
 import { useSearchParams } from 'react-router-dom';
 import { motion, useDragControls } from 'framer-motion';
 
+import useIsMobile from '../hooks/useIsMobile';
 import WomanModel from '../components/WomanModel';
 import Loader from '../components/Loader';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
 import Earring from '../components/Earring';
 import Neck from '../components/NeckModel';
 import Neck1 from '../components/NeckModel1';
-
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [breakpoint]);
-  return isMobile;
-}
+import NecklacePicker from '../components/NecklacePicker';
 
 export default function ModelPage() {
   const [skinSlider, setSkinSlider] = useState(1.72);
@@ -39,10 +31,7 @@ export default function ModelPage() {
 
   const skinToneColors = ['#ffffff', '#f1c27d', '#dab28f', '#a8754f', '#8d5524', '#000000'];
 
-  const getSkinColor = (sliderValue) => {
-    const index = Math.round(sliderValue);
-    return skinToneColors[index] || skinToneColors[0];
-  };
+  const getSkinColor = (sliderValue) => skinToneColors[Math.round(sliderValue)] || skinToneColors[0];
 
   const updateQueryParams = () => {
     setSearchParams({
@@ -102,59 +91,6 @@ export default function ModelPage() {
     }
   };
 
-  const necklacePicker = (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-[#EEBD74] flex items-center gap-2 mb-1">
-        <GiNecklaceDisplay className="text-xl" />
-        Ketting
-      </label>
-      <div className="grid grid-cols-3 gap-3">
-        <button
-          onClick={() => handleNecklaceChange('none')}
-          className={`rounded-lg p-2 h-24 flex flex-col items-center justify-center gap-1 transition ${
-            !showNeck && !showNeck1 ? 'bg-[#86561C]/20 border-2 border-[#EEBD74]' : 'bg-white/10 border border-transparent hover:border-[#86561C]'
-          }`}
-        >
-          <span className={`text-sm font-semibold ${!showNeck && !showNeck1 ? 'text-[#EEBD74]' : 'text-[#a47c4f]'}`}>
-            Geen
-          </span>
-        </button>
-
-        <button
-          onClick={() => handleNecklaceChange('neck')}
-          className={`rounded-lg overflow-hidden p-1 h-24 border transition ${
-            showNeck ? 'border-[#EEBD74] bg-[#86561C]/20' : 'border-transparent hover:border-[#86561C] bg-white/10'
-          }`}
-        >
-          <img src={
-    import.meta.env.MODE === 'development'
-      ? '/images/neck.png'
-      : `${import.meta.env.BASE_URL}/images/neck.png`
-  } alt="Ketting 1" className="object-contain w-full h-full" />
-        </button>
-
-        <button
-          onClick={() => handleNecklaceChange('neck1')}
-          className={`rounded-lg overflow-hidden p-1 h-24 border transition ${
-            showNeck1 ? 'border-[#EEBD74] bg-[#86561C]/20' : 'border-transparent hover:border-[#86561C] bg-white/10'
-          }`}
-        >
-<img
-  src={
-    import.meta.env.MODE === 'development'
-      ? '/images/neck1.png'
-      : `${import.meta.env.BASE_URL}/images/neck1.png`
-  }
-  alt="Ketting 2"
-  className="object-contain w-full h-full"
-/>
-
-
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <div ref={containerRef} className="pt-6 md:pt-16 flex flex-col md:flex-row w-full h-screen overflow-hidden">
       <div className="flex-1 h-full">
@@ -177,8 +113,6 @@ export default function ModelPage() {
                 rotation={[-0.2, Math.PI, 0]}
               />
             )}
-
-            {/* Necklaces always mounted; visibility toggled */}
             <group visible={showNeck}>
               <Neck
                 position={isMobile ? [0, -1.5, 0.5] : [0, -1.4, -0.525]}
@@ -198,49 +132,10 @@ export default function ModelPage() {
         </Canvas>
       </div>
 
-      {/* Sidebar (Responsive) */}
-      {!isMobile ? (
-        <motion.div
-          drag
-          dragControls={dragControls}
-          dragListener={false}
-          dragMomentum={false}
-          dragConstraints={containerRef}
-          className="absolute top-17 left-4 z-50 bg-transparent w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
-          style={{ backdropFilter: 'blur(10px)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}
-        >
-          <h2 className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
-            <FaArrowsAlt className="text-[#EEBD74] text-lg opacity-90 cursor-move" />
-            Pas het model aan
-          </h2>
-          <ColorSegmentPicker label="Huidkleur" value={skinSlider} onChange={setSkinSlider} options={skinToneColors} type="slider" />
-          <ColorSegmentPicker label="Haarkleur" value={hairColor} onChange={setHairColor} options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']} />
-          <ColorSegmentPicker label="Oogkleur" value={eyeColor} onChange={setEyeColor} options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']} />
-
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <GiRing className="text-[#EEBD74] text-xl transform -rotate-45" />
-              <span className="text-sm font-medium text-[#EEBD74]">Oorring</span>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" checked={showEarrings} onChange={() => setShowEarrings(!showEarrings)} />
-              <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
-              <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
-            </label>
-          </div>
-
-          {necklacePicker}
-
-          <button
-            onClick={handleReset}
-            className="md:mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#86561C] hover:bg-[#6c4710] text-white rounded-md shadow-lg transition duration-200 ease-in-out"
-          >
-            <FaUndo /> Reset
-          </button>
-        </motion.div>
-      ) : (
+      {/* Sidebar */}
+      {(isMobile ? (
         <div className="w-full md:w-[320px] h-[45vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6 bg-transparent">
-          <h2 className="text-xl md:text-2xl font-semibold text-[#EEBD74] text-center uppercase" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
+          <h2 className="text-xl font-semibold text-[#EEBD74] text-center uppercase" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
             Pas het model aan
           </h2>
           <ColorSegmentPicker label="Huidkleur" value={skinSlider} onChange={setSkinSlider} options={skinToneColors} type="slider" />
@@ -259,7 +154,7 @@ export default function ModelPage() {
             </label>
           </div>
 
-          {necklacePicker}
+          <NecklacePicker showNeck={showNeck} showNeck1={showNeck1} onChange={handleNecklaceChange} />
 
           <button
             onClick={handleReset}
@@ -268,7 +163,47 @@ export default function ModelPage() {
             <FaUndo /> Reset
           </button>
         </div>
-      )}
+      ) : (
+        <motion.div
+          drag
+          dragControls={dragControls}
+          dragListener={false}
+          dragMomentum={false}
+          dragConstraints={containerRef}
+          className="absolute top-17 left-4 z-50 bg-transparent w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
+          style={{ backdropFilter: 'blur(10px)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}
+        >
+          <h2 className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
+            <FaArrowsAlt className="text-[#EEBD74] text-lg opacity-90 cursor-move" />
+            Pas het model aan
+          </h2>
+
+          <ColorSegmentPicker label="Huidkleur" value={skinSlider} onChange={setSkinSlider} options={skinToneColors} type="slider" />
+          <ColorSegmentPicker label="Haarkleur" value={hairColor} onChange={setHairColor} options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']} />
+          <ColorSegmentPicker label="Oogkleur" value={eyeColor} onChange={setEyeColor} options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']} />
+
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <GiRing className="text-[#EEBD74] text-xl transform -rotate-45" />
+              <span className="text-sm font-medium text-[#EEBD74]">Oorring</span>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" checked={showEarrings} onChange={() => setShowEarrings(!showEarrings)} />
+              <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
+              <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
+            </label>
+          </div>
+
+          <NecklacePicker showNeck={showNeck} showNeck1={showNeck1} onChange={handleNecklaceChange} />
+
+          <button
+            onClick={handleReset}
+            className="md:mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#86561C] hover:bg-[#6c4710] text-white rounded-md shadow-lg transition duration-200 ease-in-out"
+          >
+            <FaUndo /> Reset
+          </button>
+        </motion.div>
+      ))}
     </div>
   );
 }
