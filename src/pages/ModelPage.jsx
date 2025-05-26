@@ -118,6 +118,7 @@ export default function ModelPage() {
           dragMomentum={false}
           dragConstraints={containerRef}
           className="absolute top-17 left-4 z-50 bg-transparent  w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
+          style={{backdropFilter: 'blur(10px)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'}}
         >
           <h2
             className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2"
