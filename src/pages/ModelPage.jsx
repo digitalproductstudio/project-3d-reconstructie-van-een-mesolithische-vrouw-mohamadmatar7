@@ -2,6 +2,9 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { FaRing, FaUndo, FaArrowsAlt } from 'react-icons/fa';
+import { GiNecklaceDisplay } from 'react-icons/gi';
+import { GiRing  } from 'react-icons/gi';
+
 import { useSearchParams } from 'react-router-dom';
 import { motion, useDragControls } from 'framer-motion';
 
@@ -9,6 +12,7 @@ import WomanModel from '../components/WomanModel';
 import Loader from '../components/Loader';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
 import Earring from '../components/Earring';
+import Neck from '../components/NeckModel';
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
@@ -28,6 +32,7 @@ export default function ModelPage() {
   const [eyeColor, setEyeColor] = useState('#000000');
   const [intensity, setIntensity] = useState(1);
   const [showEarrings, setShowEarrings] = useState(true);
+  const [showNeck, setShowNeck] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
@@ -48,6 +53,7 @@ export default function ModelPage() {
       eyes: eyeColor,
       intensity: intensity,
       earrings: showEarrings ? 'true' : 'false',
+      neck: showNeck ? 'true' : 'false',
     });
   };
 
@@ -57,24 +63,29 @@ export default function ModelPage() {
     const eyesParam = searchParams.get('eyes');
     const intensityParam = searchParams.get('intensity');
     const earringsParam = searchParams.get('earrings');
+    const neckParam = searchParams.get('neck');
 
     if (skinParam) setSkinSlider(parseFloat(skinParam));
     if (hairParam) setHairColor(hairParam);
     if (eyesParam) setEyeColor(eyesParam);
     if (intensityParam) setIntensity(parseFloat(intensityParam));
     if (earringsParam) setShowEarrings(earringsParam === 'true');
+    if (neckParam) setShowNeck(neckParam === 'true');
+
+
   }, [searchParams]);
 
   useEffect(() => {
     updateQueryParams();
-  }, [skinSlider, hairColor, eyeColor, intensity, showEarrings]);
+  }, [skinSlider, hairColor, eyeColor, intensity, showEarrings, showNeck]);
 
   const handleReset = () => {
     setSkinSlider(1.72);
     setHairColor('#3b2f2f');
     setEyeColor('#000000');
     setIntensity(1);
-    setShowEarrings(false);
+    setShowEarrings(true);
+    setShowNeck(true);
     updateQueryParams();
   };
 
@@ -99,10 +110,18 @@ export default function ModelPage() {
             />
             {showEarrings && (
               <Earring
-                position={isMobile ? [1.15, -0.75, 0.65] : [0.78, -0.1, -0.55]}
+                position={isMobile ? [1.15, -0.75, 0.65] : [0.78, -0.3, -0.47]}
                 scale={[0.012, 0.015, 0.015]}
                 rotation={[-0.2, Math.PI, 0]}
               />
+            )}
+            {showNeck && (
+            <Neck
+              position={isMobile ? [0, -1.5, 0.5]
+                : [0, -1.4, -0.525]}
+              scale={0.13}
+              rotation={[-0.64, 0, 0]}
+            />
             )}
           </Suspense>
           <OrbitControls />
@@ -160,7 +179,7 @@ export default function ModelPage() {
 
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <FaRing className="text-[#EEBD74] text-xl transform -rotate-45" />
+              <GiRing  className="text-[#EEBD74] text-xl transform -rotate-45" />
               <span className="text-sm font-medium text-[#EEBD74]">Oorring</span>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
@@ -169,6 +188,22 @@ export default function ModelPage() {
                 className="sr-only peer"
                 checked={showEarrings}
                 onChange={() => setShowEarrings(!showEarrings)}
+              />
+              <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
+              <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
+            </label>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <GiNecklaceDisplay className="text-[#EEBD74] text-xl" />
+              <span className="text-sm font-medium text-[#EEBD74]">Ketting</span>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={showNeck}
+                onChange={() => setShowNeck(!showNeck)}
               />
               <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
               <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
