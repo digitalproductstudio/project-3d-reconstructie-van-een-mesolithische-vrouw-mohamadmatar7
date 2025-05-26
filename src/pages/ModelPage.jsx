@@ -126,7 +126,11 @@ export default function ModelPage() {
             showNeck ? 'border-[#EEBD74] bg-[#86561C]/20' : 'border-transparent hover:border-[#86561C] bg-white/10'
           }`}
         >
-          <img src="/images/neck.png" alt="Ketting 1" className="object-contain w-full h-full" />
+          <img src={
+    import.meta.env.MODE === 'development'
+      ? '/images/neck.png'
+      : `${import.meta.env.BASE_URL}/images/neck.png`
+  } alt="Ketting 1" className="object-contain w-full h-full" />
         </button>
 
         <button
@@ -135,7 +139,17 @@ export default function ModelPage() {
             showNeck1 ? 'border-[#EEBD74] bg-[#86561C]/20' : 'border-transparent hover:border-[#86561C] bg-white/10'
           }`}
         >
-          <img src="/images/neck1.png" alt="Ketting 2" className="object-contain w-full h-full" />
+<img
+  src={
+    import.meta.env.MODE === 'development'
+      ? '/images/neck1.png'
+      : `${import.meta.env.BASE_URL}/images/neck1.png`
+  }
+  alt="Ketting 2"
+  className="object-contain w-full h-full"
+/>
+
+
         </button>
       </div>
     </div>
