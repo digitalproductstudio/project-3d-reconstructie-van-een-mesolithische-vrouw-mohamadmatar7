@@ -2,9 +2,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { FaRing, FaUndo, FaArrowsAlt } from 'react-icons/fa';
-import { GiNecklaceDisplay } from 'react-icons/gi';
-import { GiRing  } from 'react-icons/gi';
-
+import { GiNecklaceDisplay, GiRing } from 'react-icons/gi';
 import { useSearchParams } from 'react-router-dom';
 import { motion, useDragControls } from 'framer-motion';
 
@@ -13,16 +11,15 @@ import Loader from '../components/Loader';
 import ColorSegmentPicker from '../components/ColorSegmentPicker';
 import Earring from '../components/Earring';
 import Neck from '../components/NeckModel';
+import Neck1 from '../components/NeckModel1';
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
-
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [breakpoint]);
-
   return isMobile;
 }
 
@@ -33,6 +30,7 @@ export default function ModelPage() {
   const [intensity, setIntensity] = useState(1);
   const [showEarrings, setShowEarrings] = useState(true);
   const [showNeck, setShowNeck] = useState(true);
+  const [showNeck1, setShowNeck1] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
@@ -54,6 +52,7 @@ export default function ModelPage() {
       intensity: intensity,
       earrings: showEarrings ? 'true' : 'false',
       neck: showNeck ? 'true' : 'false',
+      neck1: showNeck1 ? 'true' : 'false',
     });
   };
 
@@ -64,6 +63,7 @@ export default function ModelPage() {
     const intensityParam = searchParams.get('intensity');
     const earringsParam = searchParams.get('earrings');
     const neckParam = searchParams.get('neck');
+    const neck1Param = searchParams.get('neck1');
 
     if (skinParam) setSkinSlider(parseFloat(skinParam));
     if (hairParam) setHairColor(hairParam);
@@ -71,13 +71,12 @@ export default function ModelPage() {
     if (intensityParam) setIntensity(parseFloat(intensityParam));
     if (earringsParam) setShowEarrings(earringsParam === 'true');
     if (neckParam) setShowNeck(neckParam === 'true');
-
-
+    if (neck1Param) setShowNeck1(neck1Param === 'true');
   }, [searchParams]);
 
   useEffect(() => {
     updateQueryParams();
-  }, [skinSlider, hairColor, eyeColor, intensity, showEarrings, showNeck]);
+  }, [skinSlider, hairColor, eyeColor, intensity, showEarrings, showNeck, showNeck1]);
 
   const handleReset = () => {
     setSkinSlider(1.72);
@@ -86,15 +85,64 @@ export default function ModelPage() {
     setIntensity(1);
     setShowEarrings(true);
     setShowNeck(true);
+    setShowNeck1(false);
     updateQueryParams();
   };
 
+  const handleNecklaceChange = (type) => {
+    if (type === 'none') {
+      setShowNeck(false);
+      setShowNeck1(false);
+    } else if (type === 'neck') {
+      setShowNeck(true);
+      setShowNeck1(false);
+    } else if (type === 'neck1') {
+      setShowNeck(false);
+      setShowNeck1(true);
+    }
+  };
+
+  const necklacePicker = (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm font-medium text-[#EEBD74] flex items-center gap-2 mb-1">
+        <GiNecklaceDisplay className="text-xl" />
+        Ketting
+      </label>
+      <div className="grid grid-cols-3 gap-3">
+        <button
+          onClick={() => handleNecklaceChange('none')}
+          className={`rounded-lg p-2 h-24 flex flex-col items-center justify-center gap-1 transition ${
+            !showNeck && !showNeck1 ? 'bg-[#86561C]/20 border-2 border-[#EEBD74]' : 'bg-white/10 border border-transparent hover:border-[#86561C]'
+          }`}
+        >
+          <span className={`text-sm font-semibold ${!showNeck && !showNeck1 ? 'text-[#EEBD74]' : 'text-[#a47c4f]'}`}>
+            Geen
+          </span>
+        </button>
+
+        <button
+          onClick={() => handleNecklaceChange('neck')}
+          className={`rounded-lg overflow-hidden p-1 h-24 border transition ${
+            showNeck ? 'border-[#EEBD74] bg-[#86561C]/20' : 'border-transparent hover:border-[#86561C] bg-white/10'
+          }`}
+        >
+          <img src="/images/neck.png" alt="Ketting 1" className="object-contain w-full h-full" />
+        </button>
+
+        <button
+          onClick={() => handleNecklaceChange('neck1')}
+          className={`rounded-lg overflow-hidden p-1 h-24 border transition ${
+            showNeck1 ? 'border-[#EEBD74] bg-[#86561C]/20' : 'border-transparent hover:border-[#86561C] bg-white/10'
+          }`}
+        >
+          <img src="/images/neck1.png" alt="Ketting 2" className="object-contain w-full h-full" />
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div
-      ref={containerRef}
-      className="pt-6 md:pt-16 flex flex-col md:flex-row w-full h-screen overflow-hidden"
-    >
-      {/* 3D MODEL */}
+    <div ref={containerRef} className="pt-6 md:pt-16 flex flex-col md:flex-row w-full h-screen overflow-hidden">
       <div className="flex-1 h-full">
         <Canvas camera={{ position: [0, 2, 6], fov: 45 }}>
           <ambientLight intensity={1.5} />
@@ -115,20 +163,28 @@ export default function ModelPage() {
                 rotation={[-0.2, Math.PI, 0]}
               />
             )}
-            {showNeck && (
-            <Neck
-              position={isMobile ? [0, -1.5, 0.5]
-                : [0, -1.4, -0.525]}
-              scale={0.13}
-              rotation={[-0.64, 0, 0]}
-            />
-            )}
+
+            {/* Necklaces always mounted; visibility toggled */}
+            <group visible={showNeck}>
+              <Neck
+                position={isMobile ? [0, -1.5, 0.5] : [0, -1.4, -0.525]}
+                scale={0.13}
+                rotation={[-0.64, 0, 0]}
+              />
+            </group>
+            <group visible={showNeck1}>
+              <Neck1
+                position={isMobile ? [0, -1.5, 0.5] : [0.005, -0.9, 1.15]}
+                scale={[0.185, 0.16, 0.16]}
+                rotation={[-2.75, 0, 0]}
+              />
+            </group>
           </Suspense>
           <OrbitControls />
         </Canvas>
       </div>
 
-      {/* SIDEBAR */}
+      {/* Sidebar (Responsive) */}
       {!isMobile ? (
         <motion.div
           drag
@@ -136,79 +192,30 @@ export default function ModelPage() {
           dragListener={false}
           dragMomentum={false}
           dragConstraints={containerRef}
-          className="absolute top-17 left-4 z-50 bg-transparent  w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
-          style={{backdropFilter: 'blur(10px)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'}}
+          className="absolute top-17 left-4 z-50 bg-transparent w-[320px] max-h-[90vh] overflow-y-auto p-4 md:p-6 flex flex-col gap-4 md:gap-6"
+          style={{ backdropFilter: 'blur(10px)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}
         >
-          <h2
-            className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2"
-            style={{ textShadow: '2px 2px 2px #5C3A1E' }}
-          >
-            <FaArrowsAlt
-              className="text-[#EEBD74] text-lg opacity-90 cursor-move"
-              title="Sleep het paneel"
-              onPointerDown={(e) => {
-                document.body.style.userSelect = 'none';
-                dragControls.start(e);
-              }}
-              onPointerUp={() => {
-                document.body.style.userSelect = '';
-              }}
-            />
+          <h2 className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
+            <FaArrowsAlt className="text-[#EEBD74] text-lg opacity-90 cursor-move" />
             Pas het model aan
           </h2>
-
-          <ColorSegmentPicker
-            label="Huidkleur"
-            value={skinSlider}
-            onChange={setSkinSlider}
-            options={skinToneColors}
-            type="slider"
-          />
-          <ColorSegmentPicker
-            label="Haarkleur"
-            value={hairColor}
-            onChange={setHairColor}
-            options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']}
-          />
-          <ColorSegmentPicker
-            label="Oogkleur"
-            value={eyeColor}
-            onChange={setEyeColor}
-            options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']}
-          />
+          <ColorSegmentPicker label="Huidkleur" value={skinSlider} onChange={setSkinSlider} options={skinToneColors} type="slider" />
+          <ColorSegmentPicker label="Haarkleur" value={hairColor} onChange={setHairColor} options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']} />
+          <ColorSegmentPicker label="Oogkleur" value={eyeColor} onChange={setEyeColor} options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']} />
 
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <GiRing  className="text-[#EEBD74] text-xl transform -rotate-45" />
+              <GiRing className="text-[#EEBD74] text-xl transform -rotate-45" />
               <span className="text-sm font-medium text-[#EEBD74]">Oorring</span>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={showEarrings}
-                onChange={() => setShowEarrings(!showEarrings)}
-              />
+              <input type="checkbox" className="sr-only peer" checked={showEarrings} onChange={() => setShowEarrings(!showEarrings)} />
               <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
               <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
             </label>
           </div>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <GiNecklaceDisplay className="text-[#EEBD74] text-xl" />
-              <span className="text-sm font-medium text-[#EEBD74]">Ketting</span>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={showNeck}
-                onChange={() => setShowNeck(!showNeck)}
-              />
-              <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
-              <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
-            </label>
-          </div>
+
+          {necklacePicker}
 
           <button
             onClick={handleReset}
@@ -219,32 +226,12 @@ export default function ModelPage() {
         </motion.div>
       ) : (
         <div className="w-full md:w-[320px] h-[45vh] md:h-auto overflow-y-auto p-4 md:p-6 shadow-md z-10 flex flex-col gap-4 md:gap-6 bg-transparent">
-          <h2
-            className="text-xl md:text-2xl font-semibold text-[#EEBD74] text-center uppercase"
-            style={{ textShadow: '2px 2px 2px #5C3A1E' }}
-          >
+          <h2 className="text-xl md:text-2xl font-semibold text-[#EEBD74] text-center uppercase" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
             Pas het model aan
           </h2>
-
-          <ColorSegmentPicker
-            label="Huidkleur"
-            value={skinSlider}
-            onChange={setSkinSlider}
-            options={skinToneColors}
-            type="slider"
-          />
-          <ColorSegmentPicker
-            label="Haarkleur"
-            value={hairColor}
-            onChange={setHairColor}
-            options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']}
-          />
-          <ColorSegmentPicker
-            label="Oogkleur"
-            value={eyeColor}
-            onChange={setEyeColor}
-            options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']}
-          />
+          <ColorSegmentPicker label="Huidkleur" value={skinSlider} onChange={setSkinSlider} options={skinToneColors} type="slider" />
+          <ColorSegmentPicker label="Haarkleur" value={hairColor} onChange={setHairColor} options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']} />
+          <ColorSegmentPicker label="Oogkleur" value={eyeColor} onChange={setEyeColor} options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']} />
 
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -252,16 +239,13 @@ export default function ModelPage() {
               <span className="text-sm font-medium text-[#EEBD74]">Oorring</span>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={showEarrings}
-                onChange={() => setShowEarrings(!showEarrings)}
-              />
+              <input type="checkbox" className="sr-only peer" checked={showEarrings} onChange={() => setShowEarrings(!showEarrings)} />
               <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
               <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
             </label>
           </div>
+
+          {necklacePicker}
 
           <button
             onClick={handleReset}
