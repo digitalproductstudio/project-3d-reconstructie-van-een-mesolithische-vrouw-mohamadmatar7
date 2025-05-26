@@ -2,7 +2,9 @@ import { useGLTF } from '@react-three/drei';
 import { useEffect } from 'react';
 
 export default function WomanModel({ skinColor, hairColor, eyeColor, ...props }) {
-  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/woman2.glb`);
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/woman3.glb`);
+
+  // scene.position.y = +15;
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -36,8 +38,7 @@ export default function WomanModel({ skinColor, hairColor, eyeColor, ...props })
 
         // Set eye color (iris/pupil only, not cornea/sclera)
         if (
-          child.name.includes('Iris') ||
-          child.name.includes('Pupil')
+          child.name.includes('Iris')
         ) {
           if (child.material.map) {
             child.material.map = null;

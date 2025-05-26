@@ -4,7 +4,7 @@ export default function NavBar() {
   const location = useLocation();
 
   return (
-    <nav className="px-4 py-3 fixed w-full">
+    <nav className="px-4 py-3 fixed w-full z-10">
       <div className="flex gap-6 justify-center">
         {[
           { to: '/', label: 'Home' },
