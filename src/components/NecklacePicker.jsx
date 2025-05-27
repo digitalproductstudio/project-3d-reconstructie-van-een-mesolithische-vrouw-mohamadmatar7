@@ -8,7 +8,7 @@ export default function NecklacePicker({ showNeck, showNeck1, onChange }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-[#EEBD74] flex items-center gap-2 mb-1">
+      <label className="text-base font-medium text-[#EEBD74] flex items-center gap-2 mb-1">
         <GiNecklaceDisplay className="text-xl" />
         Ketting
       </label>

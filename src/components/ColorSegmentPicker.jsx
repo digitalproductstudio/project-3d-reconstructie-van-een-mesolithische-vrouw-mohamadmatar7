@@ -4,7 +4,7 @@ export default function ColorSegmentPicker({ label, value, onChange, options, ty
  
     return (
       <div className="flex flex-col gap-2 w-full">
-        <label className="text-sm font-semibold text-[#EEBD74]"   style={{
+        <label className="text-base font-semibold text-[#EEBD74]"   style={{
     textShadow: '1px 1px 2px black',
   }}>{label}</label>
         <input
