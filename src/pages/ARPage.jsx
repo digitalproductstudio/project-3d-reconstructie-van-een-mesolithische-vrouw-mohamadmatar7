@@ -84,11 +84,11 @@ export default function ARPage() {
                     }
                 }, 1000);
 
-                // // Cleanup observers on unmount
-                // return () => {
-                //     observer.disconnect();
-                //     widthObserver.disconnect();
-                // };
+                // Cleanup observers on unmount
+                return () => {
+                    observer.disconnect();
+                    widthObserver.disconnect();
+                };
             };
         };
 
