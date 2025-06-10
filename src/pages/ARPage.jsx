@@ -115,7 +115,7 @@ export default function ARPage() {
                         />
                         <a-cylinder
                             position="0 0.1 0"
-                            radius="1.5"
+                            radius="1"
                             height="0.2"
                             color="#ebe8dc"
                         />
