@@ -6,8 +6,6 @@ import FactsPage from './pages/FactsPage';
 import ToolsPage from './pages/ToolsPage';
 import WayOfLifePage from './pages/WayOfLifePage';
 import NavBar from './components/NavBar';
-import ARPage2 from './pages/ARpage2';
-import ARPage3 from './pages/ARpage3';
 
 function AppContent() {
   const location = useLocation();
@@ -34,8 +32,6 @@ function AppContent() {
         <Route path="/facts" element={<FactsPage />} />
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/way-of-life" element={<WayOfLifePage />} />
-        <Route path="/ar2" element={<ARPage2 />} />
-        <Route path="/ar3" element={<ARPage3 />} />
       </Routes>
     </div>
   );
