@@ -34,6 +34,26 @@ export default function ARPage() {
 
                 fixBodyStyles();
 
+                // Create a specific observer for width changes
+                // after opening the AR page, it adds a video element to the body
+                // this video element causes the styling to change, so we need to observe the body and fix the styling
+                const widthObserver = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                            const style = document.body.style;
+                            if (style.width && style.width !== '100%') {
+                                style.width = '100%';
+                            }
+                        }
+                    });
+                });
+
+                // Start observing width changes
+                widthObserver.observe(document.body, {
+                    attributes: true,
+                    attributeFilter: ['style']
+                });
+
                 // Observe body and undo any AR.js changes
                 const observer = new MutationObserver(() => {
                     fixBodyStyles();
@@ -64,8 +84,11 @@ export default function ARPage() {
                     }
                 }, 1000);
 
-                // Cleanup observer on unmount
-                return () => observer.disconnect();
+                // // Cleanup observers on unmount
+                // return () => {
+                //     observer.disconnect();
+                //     widthObserver.disconnect();
+                // };
             };
         };
 
@@ -156,18 +179,24 @@ export default function ARPage() {
         html,
         body,
         #root {
-        height: 100% !important;
-        max-height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        position: relative !important;
+          height: 100% !important;
+          max-height: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow-x: hidden !important;
+          overflow-y: auto !important;
+          position: relative !important;
+          width: 100% !important;
+          min-width: 100% !important;
+          max-width: 100% !important;
         }
         
         body {
-        transform: none !important;
-        background: none !important;
+          transform: none !important;
+          background: none !important;
+          width: 100% !important;
+          min-width: 100% !important;
+          max-width: 100% !important;
         }
  
       `}</style>
