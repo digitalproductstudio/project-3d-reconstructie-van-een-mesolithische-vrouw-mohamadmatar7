@@ -7,10 +7,10 @@ export default function NavBar() {
     <nav className="px-4 py-3 fixed w-full z-10">
       <div className="flex gap-6 justify-center">
         {[
-          { to: '/', label: 'Home' },
+          { to: '/', label: 'Welkom' },
           { to: '/model', label: '3D Model' },
           { to: '/ar', label: 'AR' },
-          { to: '/facts', label: 'Facts' },
+          { to: '/facts', label: 'Weetjes' },
         ].map((item) => {
           const isActive = location.pathname === item.to;
 
