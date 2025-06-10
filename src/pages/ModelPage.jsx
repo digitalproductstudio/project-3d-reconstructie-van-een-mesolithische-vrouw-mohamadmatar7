@@ -186,7 +186,7 @@ export default function ModelPage() {
           style={{ backdropFilter: 'blur(10px)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}
         >
           <h2 className="text-xl md:text-2xl font-semibold text-[#EEBD74] uppercase cursor-default flex items-center justify-center gap-2" style={{ textShadow: '2px 2px 2px #5C3A1E' }}>
-            <FaArrowsAlt className="text-[#EEBD74] text-lg opacity-90 cursor-move" />
+            <FaArrowsAlt className="text-[#EEBD74] text-lg opacity-90 cursor-move" onPointerDown={(e) => dragControls.start(e)} />
             Pas het model aan
           </h2>
 
@@ -194,12 +194,16 @@ export default function ModelPage() {
           <ColorSegmentPicker label="Haarkleur" value={hairColor} onChange={setHairColor} options={['#2e2e2e', '#4a2f27', '#b55239', '#8b5e3c']} />
           <ColorSegmentPicker label="Oogkleur" value={eyeColor} onChange={setEyeColor} options={['#5f9ea0', '#1c1c1c', '#654321', '#a9c9ff']} />
 
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3 cursor-pointer"
+  onClick={() => setShowEarrings(!showEarrings)}>
             <div className="flex items-center gap-2">
               <GiRing className="text-[#EEBD74] text-xl transform -rotate-45" />
               <span className="text-sm font-medium text-[#EEBD74]">Oorring</span>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="relative inline-flex items-center cursor-pointer"
+                onClick={(e) => e.stopPropagation()} // Prevent double toggle
+
+            >
               <input type="checkbox" className="sr-only peer" checked={showEarrings} onChange={() => setShowEarrings(!showEarrings)} />
               <div className="w-11 h-6 bg-white rounded-full peer-checked:bg-[#86561C] transition-all"></div>
               <div className="absolute left-1 top-1 w-4 h-4 bg-[#86561C] rounded-full transition-transform peer-checked:translate-x-5 peer-checked:bg-white"></div>
