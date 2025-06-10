@@ -133,8 +133,7 @@ export default function ARPage() {
                         <a-entity
                             position="0 0 0"
                             scale="5 5 5"
-                            gltf-model="/models/woman3.glb"
-                            animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"
+  gltf-model={`${import.meta.env.BASE_URL}models/woman3.glb`}                            animation="property: rotation; to: 0 360 0; loop: true; dur: 5000"
                         />
                         <a-cylinder
                             position="0 0.1 0"
