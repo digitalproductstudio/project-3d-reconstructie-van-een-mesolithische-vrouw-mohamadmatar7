@@ -16,7 +16,7 @@ const FactCarousel = ({ facts }) => {
         <p className='text-lg md:text-xl mb-6 max-w-xl font-poppins'>{currentFact.text}</p>
       </div>
       <button onClick={handleNext} className='bg-[#7A3D02] hover:bg-[#5c2e01] text-[#DEBE89] text-lg px-6 py-3 rounded-lg shadow-md uppercase font-bold font-poppins transition'>
-        Next Fact
+        Volgend weetje
       </button>
     </div>
   );
