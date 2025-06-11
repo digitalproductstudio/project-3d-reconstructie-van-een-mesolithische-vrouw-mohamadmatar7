@@ -1,11 +1,79 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function ARPage() {
     const [isARJSLoaded, setIsARJSLoaded] = useState(false);
     const [motionPermissionGranted, setMotionPermissionGranted] = useState(false);
+    const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
+    const cleanupRef = useRef([]);
+    const originalBodyStyles = useRef({});
 
     useEffect(() => {
-        if (!motionPermissionGranted) return;
+        // Store original body styles
+        originalBodyStyles.current = {
+            margin: document.body.style.margin,
+            marginTop: document.body.style.marginTop,
+            marginLeft: document.body.style.marginLeft,
+            overflow: document.body.style.overflow,
+            height: document.body.style.height,
+            position: document.body.style.position,
+            transform: document.body.style.transform,
+            width: document.body.style.width,
+            minWidth: document.body.style.minWidth,
+            maxWidth: document.body.style.maxWidth,
+            background: document.body.style.background,
+            cssText: document.body.style.cssText
+        };
+
+        // Cleanup function to run when component unmounts
+        return () => {
+            cleanupRef.current.forEach(cleanup => cleanup());
+            cleanupRef.current = [];
+            
+            // Stop all video streams
+            const videoElements = document.querySelectorAll('video');
+            videoElements.forEach(video => {
+                if (video.srcObject) {
+                    const tracks = video.srcObject.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+            });
+            
+            // Remove AR.js video element
+            const arVideo = document.getElementById('arjs-video');
+            if (arVideo) {
+                arVideo.remove();
+            }
+            
+            // Remove scripts
+            const scripts = document.querySelectorAll('script');
+            scripts.forEach((script) => {
+                if (script.src && (script.src.includes('aframe.min.js') || script.src.includes('aframe-ar.js'))) {
+                    try {
+                        document.head.removeChild(script);
+                    } catch (e) {
+                        // Script may already be removed
+                    }
+                }
+            });
+            
+            // Restore original body styles
+            Object.keys(originalBodyStyles.current).forEach(key => {
+                if (key !== 'cssText') {
+                    document.body.style[key] = originalBodyStyles.current[key] || '';
+                }
+            });
+            
+            // Remove any mutation observers that might still be running
+            if (window.arObservers) {
+                window.arObservers.forEach(observer => observer.disconnect());
+                delete window.arObservers;
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!motionPermissionGranted || !cameraPermissionGranted) return;
 
         const aframeScript = document.createElement('script');
         aframeScript.src = 'https://aframe.io/releases/1.4.2/aframe.min.js';
@@ -58,6 +126,9 @@ export default function ARPage() {
                     attributeFilter: ['style'],
                 });
 
+                // Store observers for cleanup
+                window.arObservers = [observer, widthObserver];
+
                 setTimeout(() => {
                     const arVideo = document.getElementById('arjs-video');
                     const container = document.getElementById('ar-video-container');
@@ -73,42 +144,68 @@ export default function ARPage() {
                             margin: '0',
                             zIndex: '0',
                             borderRadius: '12px',
+                            // iOS specific fixes
+                            WebkitTransform: 'translateZ(0)',
+                            transform: 'translateZ(0)',
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden'
                         });
                     }
                 }, 1000);
-
-                return () => {
-                    observer.disconnect();
-                    widthObserver.disconnect();
-                };
             };
         };
+
+        cleanupRef.current.push(() => {
+            try {
+                if (aframeScript.parentNode) document.head.removeChild(aframeScript);
+            } catch (e) {}
+        });
 
         return () => {
             const scripts = document.querySelectorAll('script');
             scripts.forEach((script) => {
-                if (script.src.includes('aframe.min.js') || script.src.includes('aframe-ar.js')) {
-                    document.head.removeChild(script);
+                if (script.src && (script.src.includes('aframe.min.js') || script.src.includes('aframe-ar.js'))) {
+                    try {
+                        document.head.removeChild(script);
+                    } catch (e) {}
                 }
             });
         };
-    }, [motionPermissionGranted]);
+    }, [motionPermissionGranted, cameraPermissionGranted]);
 
-    const requestMotionPermission = () => {
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-            DeviceMotionEvent.requestPermission()
-                .then(response => {
-                    if (response === 'granted') {
-                        setMotionPermissionGranted(true);
-                    }
-                })
-                .catch(console.error);
-        } else {
-            setMotionPermissionGranted(true); // Already granted or not required
+    const requestMotionPermission = async () => {
+        try {
+            // Request camera permission first for iOS
+            await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            }).then(stream => {
+                // Stop the stream immediately after getting permission
+                stream.getTracks().forEach(track => track.stop());
+                setCameraPermissionGranted(true);
+            });
+
+            // Then request motion permission
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                const response = await DeviceMotionEvent.requestPermission();
+                if (response === 'granted') {
+                    setMotionPermissionGranted(true);
+                }
+            } else {
+                setMotionPermissionGranted(true); // Already granted or not required
+            }
+        } catch (error) {
+            console.error('Permission error:', error);
+            // Fallback - try to proceed anyway
+            setCameraPermissionGranted(true);
+            setMotionPermissionGranted(true);
         }
     };
 
-    if (!motionPermissionGranted) {
+    if (!motionPermissionGranted || !cameraPermissionGranted) {
         return (
             <div className="flex items-center justify-center h-screen bg-black text-white z-50">
                 <div className="text-center">
@@ -144,11 +241,12 @@ export default function ARPage() {
             >
                 <a-scene
                     embedded
-                    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-                    renderer="logarithmicDepthBuffer: true;"
+                    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; cameraParametersUrl: https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/data/camera_para.dat;"
+                    renderer="logarithmicDepthBuffer: true; antialias: true; colorManagement: true;"
                     vr-mode-ui="enabled: false"
+                    device-orientation-permission-ui="enabled: false"
                 >
-                    <a-marker preset="hiro">
+                    <a-marker preset="hiro" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
                         <a-entity
                             position="0 0 0"
                             scale="5 5 5"
@@ -178,6 +276,11 @@ export default function ARPage() {
                     z-index: 0 !important;
                     margin: 0 !important;
                     border-radius: 12px !important;
+                    /* iOS specific fixes */
+                    -webkit-transform: translateZ(0) !important;
+                    transform: translateZ(0) !important;
+                    -webkit-backface-visibility: hidden !important;
+                    backface-visibility: hidden !important;
                 }
 
                 .a-scene,
@@ -216,6 +319,18 @@ export default function ARPage() {
                     width: 100% !important;
                     min-width: 100% !important;
                     max-width: 100% !important;
+                }
+
+                /* iOS Safari specific video fixes */
+                @supports (-webkit-touch-callout: none) {
+                    #arjs-video {
+                        -webkit-transform: translateZ(0) !important;
+                        transform: translateZ(0) !important;
+                        -webkit-backface-visibility: hidden !important;
+                        backface-visibility: hidden !important;
+                        -webkit-transform-style: preserve-3d !important;
+                        transform-style: preserve-3d !important;
+                    }
                 }
             `}</style>
         </div>
